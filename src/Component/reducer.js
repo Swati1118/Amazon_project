@@ -1,46 +1,58 @@
-export const initialState = {
-    basket: [],
-    user: null,
-    address:{}
-  };
-  
-  export const getBasketTotal = (basket) =>
-    basket.reduce((amount, item) => item.price + amount, 0);
-  
-  const reducer = (state, action) => {
-    console.log("action >>>>>", action);
-    switch (action.type) {
-      case 'ADD_TO_BASKET':
-        return {
-          ...state,
-          basket: [...state.basket, action.item],
-        };
-        
-      case 'REMOVE_FROM_BASKET':
-        const index = state.basket.findIndex(
-          (basketItem) => basketItem.id === action.id
-        );
-        let newBasket = [...state.basket];
-        if (index >= 0) {
-          newBasket.splice(index, 1);
-        } else {
-          console.warn(`Can't remove product whose id is ${action.id}`);
-        }
-        return {
-          ...state,
-          basket: newBasket,
-        };
+// reducer.js
 
-        case 'SET_ADDRESS':
-            return {
-                ...state,
-                address:{...action.item},
-            }
-                
-      default:
-        return state;
-    }
-  };
-  
-  export default reducer;
-  
+export const initialState = {
+  basket: [],
+};
+
+export const getBasketTotal = (basket) =>
+  basket.reduce((amount, item) => {
+    const itemPrice = typeof item.price === 'number' ? item.price : 0; // Ensure price is a number
+    const itemQuantity = typeof item.quantity === 'number' ? item.quantity : 0; // Ensure quantity is a number
+    return itemPrice * itemQuantity + amount;
+  }, 0);
+
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'ADD_TO_BASKET':
+      const existingIndex = state.basket.findIndex((item) => item.id === action.item.id);
+      let newBasket = [...state.basket];
+
+      if (existingIndex !== -1) {
+        newBasket[existingIndex].quantity += action.item.quantity;
+      } else {
+        newBasket = [...state.basket, action.item];
+      }
+
+      return {
+        ...state,
+        basket: newBasket,
+      };
+
+    case 'REMOVE_FROM_BASKET':
+      return {
+        ...state,
+        basket: state.basket.filter((item) => item.id !== action.id),
+      };
+
+    case 'INCREMENT_ITEM':
+      return {
+        ...state,
+        basket: state.basket.map((item) =>
+          item.id === action.id ? { ...item, quantity: item.quantity + 1 } : item
+        ),
+      };
+
+    case 'DECREMENT_ITEM':
+      return {
+        ...state,
+        basket: state.basket.map((item) =>
+          item.id === action.id ? { ...item, quantity: Math.max(item.quantity - 1, 0) } : item
+      ),
+      };
+
+    default:
+      return state;
+  }
+};
+
+export default reducer;

@@ -7,7 +7,7 @@ import SignUp from "./Component/SignUp";
 import Checkout from "./Component/Checkout";
 import Home from "./Component/Home";
 import Address from "./Component/Address";
-import Order from "./Component/order";
+import Order from "./Component/Order";
 
 import Payment from "./Component/Payment";
 
@@ -23,11 +23,7 @@ function App() {
           <Route path="/signup" element={<SignUp/>} />
           <Route path="/address" element={<Address/>}/>
           <Route path="/payment" element={<Payment/>}/>
-          <Route path="/Order" element={<Order/>}/>
-       
-
-          
-
+          <Route path="/order" element={<Order/>}/>               
         </Routes>
       </Container>
     </Router>

@@ -1,41 +1,41 @@
+// Card.js
+
 import React from 'react';
 import styled from 'styled-components';
 import Rating from '@mui/material/Rating';
 import { useStateValue } from './StateProvider';
 
-function Card({id, image, title, price, rating})
- {
+function Card({ id, image, title, price, rating }) {
+  const [{ basket }, dispatch] = useStateValue();
 
-    const [{ basket }, dispatch] = useStateValue();
-    console.log("basket >>>>>",basket);
+  const addToBasket = (e) => {
+    e.preventDefault();
+    dispatch({
+      type: 'ADD_TO_BASKET',
+      item: {
+        id,
+        title,
+        price,
+        image,
+        rating,
+        quantity: 1, // Ensure quantity is initialized correctly
+      },
+    });
+  };
 
-    const addToBasket = (e) => {
-        e.preventDefault();
-        dispatch({
-            type:'ADD_TO_BASKET',
-            item :
-            {
-              id,
-                title,
-                price,
-                image,
-                rating,
-            },
-        });
-    };
-    return (
-        <Container>
-            <Image>
-                <img src={image} alt="Echo Dot" />
-            </Image>
-            <Desc>
-                <h5>{title}</h5>
-                <StyledRating name="rating" value={rating} precision={0.5} readOnly />
-                <p>₹ {price}</p>
-                <button onClick={addToBasket}>Add to Cart</button>
-            </Desc>
-        </Container>
-    );
+  return (
+    <Container>
+      <Image>
+        <img src={image} alt="Product" />
+      </Image>
+      <Desc>
+        <h5>{title}</h5>
+        <StyledRating name="rating" value={rating} precision={0.5} readOnly />
+        <p>₹ {price}</p>
+        <button onClick={addToBasket}>Add to Cart</button>
+      </Desc>
+    </Container>
+  );
 }
 
 const Container = styled.div`
@@ -45,7 +45,6 @@ const Container = styled.div`
   flex-direction: column;
   background-color: #fff;
   z-index: 10;
-
 `;
 
 const Image = styled.div`
@@ -54,7 +53,7 @@ const Image = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 0px;
-  flex:0.3;
+  flex: 0.3;
 
   img {
     width: 210px;
@@ -63,35 +62,42 @@ const Image = styled.div`
 `;
 
 const Desc = styled.div`
-    width: 90%;
-     margin: auto;
-     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex: 0.7;
-    h5{
-       font-size: 16px;
-        font-width: 600;
-  }
-  p{
-     font-weight:600;
-     margin-bottom: 5px;    
-  }
-     button {
-       width:100%;
-     height: 33px;
-     background-color: #fa8900;
-     border: none;
-     border-radius: 10px;
-     cursor: pointer;
-     margin-bottom: 100px;
-     transition: transform 0.1s, background-color 0.1s;
+  width: 90%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 0.7;
 
-  &:active {
-    transform: scale(0.95);
-    background-color: #ffc107;
+  h5 {
+    font-size: 18px; /* Increase font size for better readability */
+    font-weight: 600;
+    margin-bottom: 8px;
+    overflow: hidden; /* Prevent long titles from stretching the layout */
+    text-overflow: ellipsis; /* Truncate long titles with ellipsis */
+    white-space: nowrap; /* Ensure title stays on a single line */
   }
-     }
+
+  p {
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+  button {
+    width: 100%;
+    height: 33px;
+    background-color: #fa8900;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 100px;
+    transition: transform 0.1s, background-color 0.1s;
+
+    &:active {
+      transform: scale(0.95);
+      background-color: #ffc107;
+    }
+  }
 `;
 
 const StyledRating = styled(Rating)`
